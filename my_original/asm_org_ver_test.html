@@ -1,0 +1,87 @@
+<html>
+
+<head>
+  <title>オリジナル砂山模型ver test</title>
+  <meta charset="utf-8">
+  <script src="asm_org_ver_test.js"></script>
+</head>
+
+<body>
+  <p>オリジナル砂山模型(粒子の追加は原点のみで1ステップに1個ずつランダム性なし）、トップリングは確率1で隣接4セルに1個ずつ（ランダム性なし）、安定な高さの上限 = 3、のオリジナルモデル)</p>
+
+
+  <div id="manipulation_area">
+    <form id="set_properties">
+      <!-プロパティ：マス目の分割数、砂山全体の高さ ->
+        マス目の分割数:
+        <select id="division">
+          <!- なぜかdivision(マスの分割数)に関してのみ、下方向へのonchangeを受け付けないので、常に一番下をselectedにしておく ->
+            <!- なぜか、canvas.widthを割り切れない分割数でスタートすると、ステップごとに罫線が薄くなるという謎現象。->
+              <option value="3">3x3</option>
+              <option value="5">5x5</option>
+              <option value="7">7x7</option>
+              <option value="15">15x15</option>
+              <option value="25">25x25</option>
+              <option value="35" selected>35x35</option>
+              <option value="75">75x75</option>
+              <option value="105">105x105</option>
+              <option value="175">175x175</option>
+        </select><br>
+        砂山全体の初期高さ:
+        <select id="initHeight">
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2" selected>2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </select><br>
+        [カラーコード] 0:白,1:灰,2:赤,3:青,4以上(不安定配置): 黒
+
+        <br>
+
+    </form>
+    <div id="wrap_simulations" style="display:flex;">
+      <div id="stableConfiguration_tracking">
+        [安定配置のみ追跡]<br>
+        動的シミュレーションモード:
+        <input type="button" value="Start" id="start_stableConfiguration_tracking">
+        <input type="button" value="Stop" id="stop_stableConfiguration_tracking">
+        <br>
+        一個だけ進める:
+        <input type="button" value="一個だけ" id="justOne_stableConfiguration_tracking">
+        <br>
+        <input type="text" value="100" id="howManyStepsForStable">
+        個進める:
+        <input type="button" value="実行" id="Nstep_stableConfiguration_tracking">
+      </div>
+      &nbsp;&nbsp;&nbsp;
+      <div id="time_tracking">
+        [雪崩も含めて時間追跡]<br>
+        動的シミュレーションモード:
+        <input type="button" value="Start" id="start_time_tracking">
+        <input type="button" value="Stop" id="stop_time_tracking">
+        <br>
+        一個だけ進める:
+        <input type="button" value="一個だけ" id="justOne_time_tracking">
+      </div>
+      <br><br>
+      <input type="button" value="砂山をクリア" id="clearSandpile">
+
+    </div>
+  </div>
+
+
+  <div id="display_area">
+    <div id="state_info">
+      安定配置の現在ステップ数:<input type="text" id="step_of_stableConfiguration" value="0">
+      時刻:<input type="text" id="time" value="0">
+      トップリング回数:<input type="text" id="interval_avalanche" value="0">
+    </div>
+    <canvas id="asm_org" width="525" height="525"></canvas>
+    <button id="capture">画像を保存</button>
+  </div>
+  
+</body>
+
+
+</html>
