@@ -5,6 +5,8 @@
 // Sandpiles
 // https://youtu.be/diGjw5tghYU
 
+"use strict"
+
 let defaultColor = [255, 0, 0];
 let colors = [
   [255, 255, 0],
@@ -26,6 +28,75 @@ function setup() {
   sandpiles[width / 2][height / 2] = 1000000000;
 
   background(defaultColor[0], defaultColor[1], defaultColor[2]);
+
+  /*console   */
+
+  const saveBtn = document.createElement("button");
+  saveBtn.innerText = "save";
+  saveBtn.addEventListener("click",() => {
+    noLoop();
+    const json=JSON.stringify(sandpiles);
+    const blob = new Blob([json],{type:"application/json"});
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'ASM.json';
+    link.click();
+
+  });
+
+  const stopBtn = document.createElement("button");
+  stopBtn.innerText = "stop";
+  stopBtn.addEventListener("click",() => {noLoop();});
+
+  const startBtn = document.createElement("button");
+  startBtn.innerText = "start";
+  startBtn.addEventListener("click",() => {loop();});
+
+  const inputFiles = document.createElement("input");
+  inputFiles.type = "file";
+  inputFiles.addEventListener("change", function(e) {
+
+   console.log(e.target.files);
+   const file = e.target.files;
+   const reader = new FileReader();
+   reader.readAsText(file[0]);
+   console.log(reader.result);
+   reader.onload = function() {
+     console.log(reader.result)
+     console.log(JSON.parse(reader.result));
+     sandpiles = JSON.parse(reader.result);
+     render();
+   }
+
+  },false);
+
+  const analysisBtn = document.createElement("button");
+  analysisBtn.innerText = "analyze"
+  analysisBtn.addEventListener("click", function(e) {
+  },false);
+
+  const stateOfSandpile = {
+    currentNumberOfGrains:this.countingAddedGrains(),
+    initHeight:2,
+    //加えられた粒子数を返す
+    countingAddedGrains:function(){
+      let sum = 0;
+      for(let i = 0;i<width;i++){
+        for(let j = 0;i<height;j++){
+         sum += sandpiles[i][j];
+        }
+      }
+      return sum - this.initHeight*width*height;
+    }
+
+  }
+
+  document.body.appendChild(saveBtn);
+  document.body.appendChild(stopBtn);
+  document.body.appendChild(startBtn);
+  document.body.appendChild(inputFiles);
+  document.body.appendChild(analysisBtn);
+
 }
 
 function topple() {
@@ -85,32 +156,9 @@ function render() {
 }
 
 function draw() {
-  render();
+//  render();
 
   for (let i = 0; i < 50; i++) {
     topple();
   }
 }
-
-
-const saveBtn = document.createElement("button");
-saveBtn.innerText = "save";
-saveBtn.addEventListener("click",() => {
-  noLoop();
-  const json=JSON.stringify(sandpiles);
-  
-});
-document.body.appendChild(saveBtn);
-
-const stopBtn = document.createElement("button");
-stopBtn.innerText = "stop";
-stopBtn.addEventListener("click",() => {
-  noLoop();
-
-});
-document.body.appendChild(stopBtn);
-
-const startBtn = document.createElement("button");
-startBtn.innerText = "start";
-startBtn.addEventListener("click",() => {loop();});
-document.body.appendChild(startBtn);
