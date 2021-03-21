@@ -111,10 +111,10 @@ function setup() {
     const wrapper = document.getElementById("analysisDisplay");
     wrapper.innerHTML = "";
 
-    /*
+    
     const numOfAddedGrains = wrapper.appendChild(document.createElement("div"));
     numOfAddedGrains.innerText = `Number of added grains:${stateOfSandpile.countingAddedGrains()}`;
-    */
+    
     const numOfTopples = wrapper.appendChild(document.createElement("div"));
     numOfTopples.innerText = `Number of topples:${stateOfSandpile.countNumberOfTopples()}`;
 

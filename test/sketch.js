@@ -1,29 +1,35 @@
 //シミュレーションクラス under construction
 class Simulation {
   constructor() {
+
+    this.defaultColor = [0, 0, 0];
+    this.colors = [
+      [255, 255, 255],
+      [100, 100, 100],
+      [255, 0, 0],
+      [0, 0, 255]
+    ];
+
+    //初期条件
+    this.initHeight = 2;
     this.gridWidth = 600;
     this.gridHeight = 600;
 
-    this.initHeight = 2;
-    this.currentStackToBeAdded = 10000;
+    //砂山の状態
+    this.currentStackToBeAdded = 20;
     this.wholeAddedGrains = 0;
-
     this.sandpiles = new Array(this.gridWidth).fill().map(i => new Array(this.gridHeight).fill(this.initHeight));
     this.nextpiles = this.sandpiles;
     //this.render();
 
+    //アプリのUI
     this.playMode;
     this.action_area;
     this.analysis_display;
-
-    this.setup();
   }
-  
+
   //各種セットアップ
   setup() {
-    noLoop();//最初からレンダリングしない
-    createCanvas(600, 600);//キャンバス生成
-    pixelDensity(1);
 
 
     /*        プレイモードを選ぶselect要素を生成                */
@@ -31,25 +37,25 @@ class Simulation {
 
 
     /*       初期条件の設定用のinput要素やbutton要素を生成              */
-    this.create_setting_wrapper();//ラッパー
-    this.create_set_initHeightInput();//初期砂山高さの入力欄
-    this.create_set_grainsInput();//追加したい粒子数の入力欄
-    this.create_addBtn();//addボタン
-    this.create_fileInput();//ファイルロード
-  
+    this.create_setting_wrapper(); //ラッパー
+    this.create_set_initHeightInput(); //初期砂山高さの入力欄
+    this.create_set_grainsInput(); //追加したい粒子数の入力欄
+    this.create_addBtn(); //addボタン
+    this.create_fileInput(); //ファイルロード
+
     /*     スタート、ストップ、セーブ、アナライズ等 アクション用           */
     this.set_action_area();
-    
+
     /*分析結果を表示する画面 */
 
     const analysisDisplay = document.body.appendChild(document.createElement("div"));
     analysisDisplay.id = "analysisDisplay";
     analysisDisplay.innerText = "analysis:";
-  
-  
+
+
   }
 
-  
+
   topple() {
 
     /*
@@ -85,90 +91,66 @@ class Simulation {
     this.nextpiles = tmp; //nextpilesを更新
   }
 
-  //under construction
-  render() {
+  /*
     //under construction
-    loadPixels();
-    for (let x = 0; x < width; x++) {
-      for (let y = 0; y < height; y++) {
-        let num = this.sandpiles[x][y];
-        let col = defaultColor;
-        if (num == 0) {
-          col = colors[0];
-        } else if (num == 1) {
-          col = colors[1];
-        } else if (num == 2) {
-          col = colors[2];
-        } else if (num == 3) {
-          col = colors[3];
+
+    render() {
+      //under construction
+      loadPixels();
+      for (let x = 0; x < width; x++) {
+        for (let y = 0; y < height; y++) {
+          let num = this.sandpiles[x][y];
+          let col = this.defaultColor;
+          if (num == 0) {
+            col = this.colors[0];
+          } else if (num == 1) {
+            col = this.colors[1];
+          } else if (num == 2) {
+            col = this.colors[2];
+          } else if (num == 3) {
+            col = this.colors[3];
+          }
+
+          let pix = (x + y * width) * 4;
+          pixels[pix] = col[0];
+          pixels[pix + 1] = col[1];
+          pixels[pix + 2] = col[2];
+          // pixels[pix + 3] = 255;
         }
-
-        let pix = (x + y * width) * 4;
-        pixels[pix] = col[0];
-        pixels[pix + 1] = col[1];
-        pixels[pix + 2] = col[2];
-        // pixels[pix + 3] = 255;
       }
+
+      updatePixels();
     }
+  */
 
-    updatePixels();
-  }
 
-  
-  
-  
-  set_playMode(){
+
+  set_playMode() {
     this.playMode = document.body.appendChild(document.createElement("select"));
-    this.playMode.id = "select_playMode";
-    this.playMode.appendChild(document.createElement("option")).value = "atOnce";
-    this.playMode.appendChild(document.createElement("option")).value = "oneByOne";
+    [this.playMode.id, this.playMode.value] = ["select_playMode", "atOnce-mode"];
+    const option1 = this.playMode.appendChild(document.createElement("option"));
+    const option2 = this.playMode.appendChild(document.createElement("option"));
+    [option1.value, option2.value, option1.innerText, option2.innerText] = ["atOnce-mode", "oneByOne-mode", "atOnce-mode", "oneByOne-mode"];
 
-    console.log(this)
     this.playMode.addEventListener("change", function(e) {
-      console.log(this);
       const addBtn = document.getElementById("addBtn");
-
-      if (this.playMode.value === "atOnce") {
-        addBtn.value = "Add at once";
-        addBtn.addEventListener("click", function(e) {
-          console.log(this)
-
-          this.sandpiles[width / 2][height / 2] += this.currentStackToBeAdded;
-          this.currentStackToBeAdded = 0;
-          console.log(`origin:%i, currentStack:%i`, this.sandpiles[width / 2][height / 2], this.currentStackToBeAdded);
-        }.bind(this));
-      }
-
-      if (this.playMode.value === "oneByOne") {
-        console.log(this)
-        addBtn.value = "Add one by one";
-        addBtn.addEventListener("click", function(e) {
-          console.log(this)
-          this.sandpiles[width / 2][height / 2] += 1;
-          this.currentStackToBeAdded -= 1;
-          console.log(`origin:%i, currentStack:%i`, this.sandpiles[width / 2][height / 2], this.currentStackToBeAdded);
-        }.bind(this));
-      }
-
+      this.switch_functionality_addBtn();
     }.bind(this));
+
   }
-  
-  
-  create_setting_wrapper(){
+
+
+  create_setting_wrapper() {
     const setting_wrapper = document.body.appendChild(document.createElement("div"));
     setting_wrapper.id = "setting_wrapper";
   }
-  
-  create_set_initHeightInput(){
+
+  create_set_initHeightInput() {
     const set_initHeight = document.getElementById("setting_wrapper").appendChild(document.createElement("input"));
     set_initHeight.id = "set_initHeight";
     set_initHeight.type = "number";
     set_initHeight.addEventListener("change", function(e) {
-      console.log(e);
-      console.log(this);
-      console.log(typeof this.value);
-      this.initHeight = Number(this.value);
-
+      this.initHeight = Number(document.getElementById("set_initHeight").value);
       this.sandpiles = new Array(this.gridWidth).fill().map(i => new Array(this.gridHeight).fill(this.initHeight));
       this.nextpiles = new Array(this.gridWidth).fill().map(i => new Array(this.gridHeight).fill(this.initHeight));
       render();
@@ -180,7 +162,7 @@ class Simulation {
     set_grains.id = "set_grains";
     set_grains.type = "number";
     set_grains.addEventListener("change", function(e) {
-      this.currentStackToBeAdded = Number(this.value);
+      this.currentStackToBeAdded = Number(document.getElementById("set_grains").value);
     }.bind(this));
 
   }
@@ -188,9 +170,37 @@ class Simulation {
   create_addBtn() {
     const addBtn = document.getElementById("setting_wrapper").appendChild(document.createElement("button"));
     addBtn.id = "addBtn";
+    this.switch_functionality_addBtn();
+
   }
-  
-  create_fileInput(){
+
+  switch_functionality_addBtn(){
+    if (this.playMode.value == "atOnce-mode") {
+
+      addBtn.value = "Add at once";
+      addBtn.innerText = "Add at once";
+      addBtn.addEventListener("click", function(e) {
+        this.sandpiles[this.gridWidth / 2][this.gridHeight / 2] += this.currentStackToBeAdded;
+        this.wholeAddedGrains += this.currentStackToBeAdded;
+        this.currentStackToBeAdded = 0;
+        document.getElementById("set_grains").value = 0;
+      }.bind(this));
+
+    }
+
+    if (this.playMode.value == "oneByOne-mode") {
+      addBtn.value = "Add one by one";
+      addBtn.innerText = "Add one by one";
+      addBtn.addEventListener("click", function(e) {
+        this.sandpiles[this.gridWidth / 2][this.gridHeight / 2] += 1;
+        this.currentStackToBeAdded -= 1;
+      }.bind(this));
+    }
+
+
+  }
+
+  create_fileInput() {
     //ファイルをロード
     const inputFiles = document.getElementById("setting_wrapper").appendChild(document.createElement("input"));
     inputFiles.type = "file";
@@ -201,18 +211,27 @@ class Simulation {
       const reader = new FileReader();
       reader.readAsText(file[0]);
       console.log(reader.result);
+
       reader.onload = function() {
-        console.log(reader.result)
         console.log(JSON.parse(reader.result));
-        this.sandpiles = JSON.parse(reader.result);
+        const sandpile_data = JSON.parse(reader.result);
+
+        this.initHeight = sandpile_data.init_condition.initHeight;
+        this.gridWidth = sandpile_data.init_condition.gridSize.width;
+        this.gridHeight = sandpile_data.init_condition.gridSize.height;
+
+        this.sandpiles = sandpile_data.state.sandpiles;
+        this.wholeAddedGrains = sandpile_data.state.wholeAddedGrains;
+        console.log(this)
+
         render();
-      }
+      }.bind(this);
 
     }.bind(this), false);
-  
+
   }
-  
-  set_action_area(){
+
+  set_action_area() {
     //スタート、ストップ、セーブ、アナライズ
     const action_area = document.body.appendChild(document.createElement("div"));
 
@@ -220,13 +239,31 @@ class Simulation {
     saveBtn.innerText = "save";
     saveBtn.addEventListener("click", () => {
       noLoop();
-      const json = JSON.stringify(sandpiles);
+      const sandpile_data = {
+        init_condition: {
+          initHeight: this.initHeight,
+          gridSize: {
+            width: this.gridWidth,
+            height: this.gridHeight
+          },
+          maxStability: 3
+        },
+        state: {
+          sandpiles: this.sandpiles,
+          wholeAddedGrains: this.wholeAddedGrains //this.countingAddedGrains(),
+          //numOfAvalanche:0,
+          //maxAvalancheTime:0
+        }
+      }
+
+
+      const json = JSON.stringify(sandpile_data);
       const blob = new Blob([json], {
         type: "application/json"
       });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
-      link.download = 'ASM.json';
+      link.download = `ASM_${sandpile_data.state.wholeAddedGrains}_IH_${sandpile_data.init_condition.initHeight}_grid_${sandpile_data.init_condition.gridSize.width}bi${sandpile_data.init_condition.gridSize.height}.json`;
       link.click();
 
     });
@@ -235,11 +272,17 @@ class Simulation {
     stopBtn.innerText = "stop";
     stopBtn.addEventListener("click", () => {
       noLoop();
+
+      document.getElementById("set_initHeight").disabled = false;
+      document.getElementById("set_grains").disabled = false;
+
     });
 
     const startBtn = action_area.appendChild(document.createElement("button"));
     startBtn.innerText = "start";
     startBtn.addEventListener("click", () => {
+      document.getElementById("set_initHeight").disabled = true;
+      document.getElementById("set_grains").disabled = true;
       loop();
     });
 
@@ -247,8 +290,8 @@ class Simulation {
     analysisBtn.innerText = "analyze";
     analysisBtn.addEventListener("click", function(e) {
       console.log("analyze")
-      console.log(`Number of added grains:${this.countingAddedGrains()}`);
-      console.log(`Number of topples:%i`, this.countNumberOfTopples());
+//      console.log(`Number of added grains:${this.countingAddedGrains()}`);
+//      console.log(`Number of topples:%i`, this.countNumberOfTopples());
 
       const wrapper = document.getElementById("analysisDisplay");
       wrapper.innerHTML = "";
@@ -265,23 +308,67 @@ class Simulation {
 
   }
 
+  countingAddedGrains() {
+    let sum = 0;
+
+    for (let i = 0; i < this.gridWidth; i++) {
+      for (let j = 0; j < this.gridHeight; j++) {
+        //  console.log(`sandpiles[%i][%i]:%i`,i,j,sandpiles[i][j]);
+        sum += this.sandpiles[i][j];
+      }
+    }
+    console.log(`sum:%i,initHeight:%i,width:%i,height:%i`, sum, this.initHeight, width, height);
+    return sum - this.initHeight * width * height;
+  }
+
 
 
 }
-
 
 //シミュレーションスタート
+const mySimulation = new Simulation();
+mySimulation.setup();
+
 function setup() {
-  const mySimulation = new Simulation();
-  mySimulation.setup();
+  noLoop();
+  createCanvas(mySimulation.gridWidth, mySimulation.gridHeight);
+  pixelDensity(1);
+  background(mySimulation.defaultColor[0], mySimulation.defaultColor[1], mySimulation.defaultColor[2]);
+
 }
 
+function render() {
+  loadPixels();
+  for (let x = 0; x < width; x++) {
+    for (let y = 0; y < height; y++) {
+      let num = mySimulation.sandpiles[x][y];
+      let col = mySimulation.defaultColor;
+      if (num == 0) {
+        col = mySimulation.colors[0];
+      } else if (num == 1) {
+        col = mySimulation.colors[1];
+      } else if (num == 2) {
+        col = mySimulation.colors[2];
+      } else if (num == 3) {
+        col = mySimulation.colors[3];
+      }
+
+      let pix = (x + y * width) * 4;
+      pixels[pix] = col[0];
+      pixels[pix + 1] = col[1];
+      pixels[pix + 2] = col[2];
+      // pixels[pix + 3] = 255;
+    }
+  }
+
+  updatePixels();
+}
 
 //draw
 function draw() {
-
-  mySimulation.render();
-
+  //console.log(mySimulation.sandpiles[mySimulation.gridWidth/2][mySimulation.gridHeight/2]);//ずっと2
+  //mySimulation.render.call(this);
+  render();
   for (let i = 0; i < 50; i++) {
     mySimulation.topple();
   }
