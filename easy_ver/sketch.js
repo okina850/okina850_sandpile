@@ -7,12 +7,12 @@
 
 "use strict"
 
-let defaultColor = [255, 0, 0];
+let defaultColor = [0, 0, 0];
 let colors = [
-  [255, 255, 0],
-  [0, 185, 63],
-  [0, 104, 255],
-  [122, 0, 229]
+  [255, 255, 255],
+  [100, 100, 100],
+  [255, 0, 0],
+  [0, 0, 255]
 ];
 
 let sandpiles;
@@ -215,7 +215,7 @@ function render() {
 }
 
 function draw() {
-
+  
   render();
 
   for (let i = 0; i < 50; i++) {
