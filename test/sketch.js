@@ -296,18 +296,19 @@ class Simulation {
       const wrapper = document.getElementById("analysisDisplay");
       wrapper.innerHTML = "";
 
-      /*
+      
       const numOfAddedGrains = wrapper.appendChild(document.createElement("div"));
-      numOfAddedGrains.innerText = `Number of added grains:${stateOfSandpile.countingAddedGrains()}`;
-      */
+      numOfAddedGrains.innerText = `Number of added grains:${this.wholeAddedGrains}`;
+      
       const numOfTopples = wrapper.appendChild(document.createElement("div"));
-      numOfTopples.innerText = `Number of topples:${stateOfSandpile.countNumberOfTopples()}`;
+      numOfTopples.innerText = `Number of topples:${this.countNumberOfTopples()}`;
 
 
     }.bind(this), false);
 
   }
 
+  /*
   countingAddedGrains() {
     let sum = 0;
 
@@ -320,7 +321,7 @@ class Simulation {
     console.log(`sum:%i,initHeight:%i,width:%i,height:%i`, sum, this.initHeight, width, height);
     return sum - this.initHeight * width * height;
   }
-
+  */
 
 
 }
