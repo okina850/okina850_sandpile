@@ -31,7 +31,7 @@ const MoveStandard_1Step = (n,ih,kLatticeSize,kLatticeHalfSize) => {
 
 
     let top = -1;
-    let walking = new Array(kLatticeSize*kLatticeSize).fill().map(i => LCoord());
+    let walking = new Array(kLatticeSize*kLatticeSize).fill().map(i => LCoord());//少し微妙な初期化
         //"walking" key: the number of sequence of toppling in the present avalanche 
         //          value: the object of lattice point
         //walking[3] = {x:11,y:4} means "The 3rd lattice to topple is located at  (11,4)
@@ -45,19 +45,19 @@ const MoveStandard_1Step = (n,ih,kLatticeSize,kLatticeHalfSize) => {
     let max_of_top = 0;//the maximum of the time during which avalanches continue during the whole simulation.
     let n_of_moves = 0;//the number of moves occured during the whole simulation.
 
-    for(let i = n;i>=0;i--){
+    for(let i = n;i>0;i--){
         //Put one grain on the origin
         //If the stability of the origin breaks, push the origin lattice back into the walking stack.
         if(++z_lat[kLatticeHalfSize][kLatticeHalfSize] >= 4){// one grain out of 'n' grains being put on the origin, and evaluating if the height of the origin is bigger or equal to 4(the upper limit value of height with which the cell stays stable.).
             walking[++top].x = kLatticeHalfSize;
             walking[top].y = kLatticeHalfSize;
         }
-        console.log(`i:${i}\n`);
+        //console.log(`i:${i}\n`);
 
         //avalanche continues until the walking stack is empty
         while(top >= 0){
             n_of_moves += 1;
-           console.log(`top=${top}\n`);
+           //console.log(`top=${top}\n`);
            //refresh the maximum time of avalanches
             if(max_of_top < top){
                 max_of_top = top;
@@ -81,8 +81,9 @@ const MoveStandard_1Step = (n,ih,kLatticeSize,kLatticeHalfSize) => {
                 // 'k' denotes a direction out of 4.(k = 0,1,2,3 : right,up,left,down) (refering to "kDx","kDy" on "abel" on "Abel.h")
                 lx = x + kDx[k];
                 ly = y + kDy[k];
-                console.log(`k=${k}:(lx,ly) = (${lx},${ly})`);
+                //console.log(`k=${k}:(lx,ly) = (${lx},${ly})`);
                 
+                /*
                 //If the next lattice to visit is out of range of lattice, add new row or column to avoid an error.
                 //I don't know whether this is reasonable as an error handling.
                 
@@ -109,6 +110,7 @@ const MoveStandard_1Step = (n,ih,kLatticeSize,kLatticeHalfSize) => {
                   for(let elem of to_be_moved){elem.unshift(false);}
                 }
                 //if(lx<0 && ly<0){}
+                */
 
                 v_sites[lx][ly] = true;//The falling grain lands on the "true" cell which we designated right above.
                 z_lat[lx][ly]++;//The grain has been piled.
@@ -162,71 +164,3 @@ const capture = (sandpiles)=>{
 
 }
 
-
-
-/* C++のsandpile
-
-
-	// now running the process until stabilisation
-
-	t2 = clock();
-
-	std::cout<<endl;
-
-	std::cout<<"Maximal number in the stack was "<<max_of_top<<endl;
-	std::cout<<"Number of moves in the main loop was "<<n_of_moves<<endl;
-
-
-	BoxCoord b = TrimmedArray(v_sites, kLatticeSize, kLatticeSize);
-	ArrayToCSV(z_lat, v_sites, b.i1, b.i2, b.j1, b.j2, ("Abel" + std::to_string(n) + ".csv").c_str());
-	ArrayToPPM(z_lat, v_sites, b.i1, b.i2, b.j1, b.j2, ("Abel" + std::to_string(n) + ".ppm").c_str());
-
-	// clean-ups
-	for (int k = 0; k<kLatticeSize; ++k){
-		delete[] z_lat[k];
-		delete[] v_sites[k];
-		delete[] odometer[k];
-		delete[] to_be_moved[k];
-	}
-
-	delete[] z_lat;
-	delete[] v_sites;
-	delete[] odometer;
-	delete[] to_be_moved;
-	delete[] walking;
-
-
-	return ((double)(t2)-double(t1))*0.001;
-}
-
-
-*/
-
-/*二次元配列のppm化
-console.log(sandpiles);
-let array = [`P3\n${width} ${height}\n255\n`];
-for(let i=0;i<height;i++){
-  for(let j=0;j<width;j++){
-    let row_data = ``;
-    if (sandpiles[i][j] == 1){
-      row_data += `255 128 255 `;
-    }else if(sandpiles[i][j] == 2){
-      row_data += `255 0 0 `;
-    }else if(sandpiles[i][j] == 3){
-      row_data += `0 128 255 `;//"0 128 255 ";
-    }else{
-      row_data += `0 0 0 ` //"0 0 0 ";
-    }
-    array[0] += row_data;
-    if(j == width - 1){
-      array[0] += `\n`;
-    }
-  }
-}
-
-let blob = new Blob(array,{type:"text/plan"});
-let link = document.createElement('a');
-link.href = URL.createObjectURL(blob);
-link.download = '作ったファイル.ppm';
-link.click();
-*/
