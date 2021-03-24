@@ -1,3 +1,5 @@
+//比較 of hayk and easyver
+
 let kLatticeSize = 100;
 let kLatticeHalfSize = 50;
 
@@ -581,6 +583,8 @@ class Simulation {
 //シミュレーションスタート
 const mySimulation = new Simulation();
 
+
+//最終的配置の比較
 let simu10,hayk10;
 for(let n = 10;n>=0;n--){
   mySimulation.reset_grid(10,10);
