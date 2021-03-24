@@ -1,6 +1,7 @@
 //シミュレーションクラス under construction
 class Simulation {
   constructor() {
+    
 
     this.defaultColor = [0, 0, 0];
     this.colors = [
@@ -14,6 +15,7 @@ class Simulation {
     this.initHeight = 2;
     this.gridWidth = 600;
     this.gridHeight = 600;
+    
 
     //砂山の状態
     this.currentStackToBeAdded = 20;
@@ -55,7 +57,7 @@ class Simulation {
 
   }
 
-
+  //topple
   topple() {
 
     /*
@@ -90,6 +92,51 @@ class Simulation {
     this.sandpiles = this.nextpiles; //トップリング済みの結果をthis.sandpilesに渡す。this.sandpilesの参照であるtmpも連動して変化。
     this.nextpiles = tmp; //nextpilesを更新
   }
+  
+  
+  //save
+  save_json(){
+    const sandpile_data = {
+      init_condition: {
+        initHeight: this.initHeight,
+        gridSize: {
+          width: this.gridWidth,
+          height: this.gridHeight
+        },
+        maxStability: 3
+      },
+      state: {
+        sandpiles: this.sandpiles,
+        wholeAddedGrains: this.wholeAddedGrains //this.countingAddedGrains(),
+        //numOfAvalanche:0,
+        //maxAvalancheTime:0
+      }
+    }
+  
+  }
+  
+  save_picture(){
+    const sandpile_data = {
+      init_condition: {
+        initHeight: this.initHeight,
+        gridSize: {
+          width: this.gridWidth,
+          height: this.gridHeight
+        },
+        maxStability: 3
+      },
+      state: {
+        sandpiles: this.sandpiles,
+        wholeAddedGrains: this.wholeAddedGrains //this.countingAddedGrains(),
+        //numOfAvalanche:0,
+        //maxAvalancheTime:0
+      }
+    }
+    saveCanvas(canvas, `ASM_${sandpile_data.state.wholeAddedGrains}_IH_${sandpile_data.init_condition.initHeight}_grid_${sandpile_data.init_condition.gridSize.width}bi${sandpile_data.init_condition.gridSize.height}`, 'jpg');
+  }
+  
+  
+  
 
   /*
     //under construction
@@ -235,9 +282,9 @@ class Simulation {
     //スタート、ストップ、セーブ、アナライズ
     const action_area = document.body.appendChild(document.createElement("div"));
 
-    const saveBtn = action_area.appendChild(document.createElement("button"));
-    saveBtn.innerText = "save";
-    saveBtn.addEventListener("click", () => {
+    const saveJsonBtn = action_area.appendChild(document.createElement("button"));
+    saveJsonBtn.innerText = "save json";
+    saveJsonBtn.addEventListener("click", () => {
       noLoop();
       const sandpile_data = {
         init_condition: {
@@ -267,6 +314,15 @@ class Simulation {
       link.click();
 
     });
+    
+    const savePictureBtn = action_area.appendChild(document.createElement("button"));
+    savePictureBtn.innerText = "save picture";
+    savePictureBtn.addEventListener("click", () => {
+      noLoop();
+      this.save_picture();
+    });
+
+
 
     const stopBtn = action_area.appendChild(document.createElement("button"));
     stopBtn.innerText = "stop";
@@ -296,17 +352,21 @@ class Simulation {
       const wrapper = document.getElementById("analysisDisplay");
       wrapper.innerHTML = "";
 
-      
+
       const numOfAddedGrains = wrapper.appendChild(document.createElement("div"));
       numOfAddedGrains.innerText = `Number of added grains:${this.wholeAddedGrains}`;
-      
+
       const numOfTopples = wrapper.appendChild(document.createElement("div"));
-      numOfTopples.innerText = `Number of topples:${this.countNumberOfTopples()}`;
+      numOfTopples.innerText = `Number of topples:`;
+
+      const isDone = wrapper.appendChild(document.createElement("div"));
+      isDone.innerText = `Avalanche is done:`;
 
 
     }.bind(this), false);
 
   }
+
 
   /*
   countingAddedGrains() {
@@ -331,11 +391,15 @@ const mySimulation = new Simulation();
 mySimulation.setup();
 
 function setup() {
+  
   noLoop();
-  createCanvas(mySimulation.gridWidth, mySimulation.gridHeight);
+  //canvas生成
+  const canvas = createCanvas(mySimulation.gridWidth, mySimulation.gridHeight);
   pixelDensity(1);
   background(mySimulation.defaultColor[0], mySimulation.defaultColor[1], mySimulation.defaultColor[2]);
-
+  
+//  const canvas = createCanvas(mySimulation.gridWidth, mySimulation.gridHeight);
+//  saveCanvas(c, 'myCanvas', 'jpg');
 }
 
 function render() {
