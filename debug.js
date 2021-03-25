@@ -33,7 +33,7 @@ const MoveStandard_1Step = (n,ih,kLatticeSize,kLatticeHalfSize) => {
 
 
     let top = -1;
-    let walking = new Array(kLatticeSize*kLatticeSize).fill().map(i => LCoord());
+    let walking = new Array(kLatticeSize*kLatticeSize).fill().map(i => LCoord());//少し微妙な初期化
         //"walking" key: the number of sequence of toppling in the present avalanche 
         //          value: the object of lattice point
         //walking[3] = {x:11,y:4} means "The 3rd lattice to topple is located at  (11,4)
@@ -113,6 +113,10 @@ const MoveStandard_1Step = (n,ih,kLatticeSize,kLatticeHalfSize) => {
                 }
                 //if(lx<0 && ly<0){}
                 */
+                
+                if(!(0 <= lx && lx < kLatticeSize && 0 <= ly && ly < kLatticeSize)){
+                  continue;
+                }
 
                 v_sites[lx][ly] = true;//The falling grain lands on the "true" cell which we designated right above.
                 z_lat[lx][ly]++;//The grain has been piled.
@@ -135,6 +139,7 @@ const MoveStandard_1Step = (n,ih,kLatticeSize,kLatticeHalfSize) => {
 
     return z_lat;
 }
+
 
 
 //シミュレーションクラス under construction
@@ -610,4 +615,11 @@ for(let n = 10;n>=0;n--){
   console.log(map);
   
 }
+
+
+
+
+
+
+
 
