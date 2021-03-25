@@ -14,7 +14,7 @@ MoveStandard_1Step
 
 arguments:
   the number of grains(int) : n, initial height(int): ih, lattice size(int): kLatticeSize, half lattice size(int):kLatticeHalfSize
-return: 
+return:
   sandpile data(array) :z_lattice
 */
 const MoveStandard_1Step = (n,ih,kLatticeSize,kLatticeHalfSize) => {
@@ -33,7 +33,7 @@ const MoveStandard_1Step = (n,ih,kLatticeSize,kLatticeHalfSize) => {
 
     let top = -1;
     let walking = new Array(kLatticeSize*kLatticeSize).fill().map(i => LCoord());//少し微妙な初期化
-        //"walking" key: the number of sequence of toppling in the present avalanche 
+        //"walking" key: the number of sequence of toppling in the present avalanche
         //          value: the object of lattice point
         //walking[3] = {x:11,y:4} means "The 3rd lattice to topple is located at  (11,4)
         //"top" is an integer to stack the key of "walking".
@@ -70,7 +70,7 @@ const MoveStandard_1Step = (n,ih,kLatticeSize,kLatticeHalfSize) => {
 
             z_lat[x][y] = z_lat[x][y] - 4;
             //if(z_lat.some(x => x.length != 5)) console.log(`i:%i,walking[top]:%o,z_lat:%o`,i,walking[top],z_lat);
-            
+
             if (z_lat[x][y] < 4){
                 top--;
                 to_be_moved[x][y] = false;
@@ -85,11 +85,11 @@ const MoveStandard_1Step = (n,ih,kLatticeSize,kLatticeHalfSize) => {
                 lx = x + kDx[k];
                 ly = y + kDy[k];
                 //console.log(`k=${k}:(lx,ly) = (${lx},${ly})`);
-                
+
                 /*
                 //If the next lattice to visit is out of range of lattice, add new row or column to avoid an error.
                 //I don't know whether this is reasonable as an error handling.
-                
+
                 if(lx > v_sites.length - 1){
                   v_sites.push(Array(v_sites.length).fill().map(i => false));
                   z_lat.push(Array(z_lat.length).fill().map(i => ih));
@@ -114,7 +114,7 @@ const MoveStandard_1Step = (n,ih,kLatticeSize,kLatticeHalfSize) => {
                 }
                 //if(lx<0 && ly<0){}
                 */
-                
+
                 if(!(0 <= lx && lx < kLatticeSize && 0 <= ly && ly < kLatticeSize)){
                   continue;
                 }
@@ -122,7 +122,7 @@ const MoveStandard_1Step = (n,ih,kLatticeSize,kLatticeHalfSize) => {
                 v_sites[lx][ly] = true;//The falling grain lands on the "true" cell which we designated right above.
                 z_lat[lx][ly]++;//The grain has been piled.
                 //console.log(z_lat);
-                
+
                 //Fires when a toppling successively occurs.(when "avalanche" continues)
                 if (to_be_moved[lx][ly] == false && z_lat[lx][ly] >= 4){
                         //(lx,ly) cell is going to be the next one to topple.
@@ -170,4 +170,3 @@ const capture = (sandpiles)=>{
   link.click();
 
 }
-
