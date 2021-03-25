@@ -1,5 +1,5 @@
-let kLatticeSize = 100;
-let kLatticeHalfSize = 50;
+//let kLatticeSize = 100;
+//let kLatticeHalfSize = 50;
 
 //A vector notation designating the 4 neighborhoods of the cell on which we put the grains.
 const kDx = [1,0,-1,0];
@@ -19,6 +19,7 @@ return:
 */
 const MoveStandard_1Step = (n,ih,kLatticeSize,kLatticeHalfSize) => {
     let z_lat =  new Array(kLatticeSize).fill().map(i => new Array(kLatticeSize).fill(ih));
+    console.log(JSON.stringify(z_lat))
         // models the standard lattice Z^2
     let v_sites = new Array(kLatticeSize).fill().map(i => new Array(kLatticeSize).fill(false));
         // vertices of Z^2 which were visited during the process//which means the neighborhood cells onto which the toppled grains fall.
@@ -68,6 +69,8 @@ const MoveStandard_1Step = (n,ih,kLatticeSize,kLatticeHalfSize) => {
             y = walking[top].y;
 
             z_lat[x][y] = z_lat[x][y] - 4;
+            //if(z_lat.some(x => x.length != 5)) console.log(`i:%i,walking[top]:%o,z_lat:%o`,i,walking[top],z_lat);
+            
             if (z_lat[x][y] < 4){
                 top--;
                 to_be_moved[x][y] = false;
@@ -111,10 +114,14 @@ const MoveStandard_1Step = (n,ih,kLatticeSize,kLatticeHalfSize) => {
                 }
                 //if(lx<0 && ly<0){}
                 */
+                
+                if(!(0 <= lx && lx < kLatticeSize && 0 <= ly && ly < kLatticeSize)){
+                  continue;
+                }
 
                 v_sites[lx][ly] = true;//The falling grain lands on the "true" cell which we designated right above.
                 z_lat[lx][ly]++;//The grain has been piled.
-
+                //console.log(z_lat);
                 
                 //Fires when a toppling successively occurs.(when "avalanche" continues)
                 if (to_be_moved[lx][ly] == false && z_lat[lx][ly] >= 4){
