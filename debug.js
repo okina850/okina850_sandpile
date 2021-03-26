@@ -1,7 +1,5 @@
-//比較 of hayk and easyver
-
-let kLatticeSize = 100;
-let kLatticeHalfSize = 50;
+//let kLatticeSize = 100;
+//let kLatticeHalfSize = 50;
 
 //A vector notation designating the 4 neighborhoods of the cell on which we put the grains.
 const kDx = [1,0,-1,0];
@@ -16,11 +14,12 @@ MoveStandard_1Step
 
 arguments:
   the number of grains(int) : n, initial height(int): ih, lattice size(int): kLatticeSize, half lattice size(int):kLatticeHalfSize
-return: 
+return:
   sandpile data(array) :z_lattice
 */
 const MoveStandard_1Step = (n,ih,kLatticeSize,kLatticeHalfSize) => {
     let z_lat =  new Array(kLatticeSize).fill().map(i => new Array(kLatticeSize).fill(ih));
+    console.log(JSON.stringify(z_lat))
         // models the standard lattice Z^2
     let v_sites = new Array(kLatticeSize).fill().map(i => new Array(kLatticeSize).fill(false));
         // vertices of Z^2 which were visited during the process//which means the neighborhood cells onto which the toppled grains fall.
@@ -34,7 +33,7 @@ const MoveStandard_1Step = (n,ih,kLatticeSize,kLatticeHalfSize) => {
 
     let top = -1;
     let walking = new Array(kLatticeSize*kLatticeSize).fill().map(i => LCoord());//少し微妙な初期化
-        //"walking" key: the number of sequence of toppling in the present avalanche 
+        //"walking" key: the number of sequence of toppling in the present avalanche
         //          value: the object of lattice point
         //walking[3] = {x:11,y:4} means "The 3rd lattice to topple is located at  (11,4)
         //"top" is an integer to stack the key of "walking".
@@ -70,6 +69,8 @@ const MoveStandard_1Step = (n,ih,kLatticeSize,kLatticeHalfSize) => {
             y = walking[top].y;
 
             z_lat[x][y] = z_lat[x][y] - 4;
+            //if(z_lat.some(x => x.length != 5)) console.log(`i:%i,walking[top]:%o,z_lat:%o`,i,walking[top],z_lat);
+
             if (z_lat[x][y] < 4){
                 top--;
                 to_be_moved[x][y] = false;
@@ -84,11 +85,11 @@ const MoveStandard_1Step = (n,ih,kLatticeSize,kLatticeHalfSize) => {
                 lx = x + kDx[k];
                 ly = y + kDy[k];
                 //console.log(`k=${k}:(lx,ly) = (${lx},${ly})`);
-                
+
                 /*
                 //If the next lattice to visit is out of range of lattice, add new row or column to avoid an error.
                 //I don't know whether this is reasonable as an error handling.
-                
+
                 if(lx > v_sites.length - 1){
                   v_sites.push(Array(v_sites.length).fill().map(i => false));
                   z_lat.push(Array(z_lat.length).fill().map(i => ih));
@@ -113,15 +114,15 @@ const MoveStandard_1Step = (n,ih,kLatticeSize,kLatticeHalfSize) => {
                 }
                 //if(lx<0 && ly<0){}
                 */
-                
+
                 if(!(0 <= lx && lx < kLatticeSize && 0 <= ly && ly < kLatticeSize)){
                   continue;
                 }
 
                 v_sites[lx][ly] = true;//The falling grain lands on the "true" cell which we designated right above.
                 z_lat[lx][ly]++;//The grain has been piled.
+                //console.log(z_lat);
 
-                
                 //Fires when a toppling successively occurs.(when "avalanche" continues)
                 if (to_be_moved[lx][ly] == false && z_lat[lx][ly] >= 4){
                         //(lx,ly) cell is going to be the next one to topple.
@@ -138,6 +139,36 @@ const MoveStandard_1Step = (n,ih,kLatticeSize,kLatticeHalfSize) => {
     }
 
     return z_lat;
+}
+
+const capture = (sandpiles)=>{
+  console.log(sandpiles);
+  let array = [`P3\n${kLatticeSize} ${kLatticeSize}\n255\n`];
+  for(let i=0;i<kLatticeSize;i++){
+    for(let j=0;j<kLatticeSize;j++){
+      let row_data = ``;
+      if (sandpiles[i][j] == 1){
+        row_data += `255 128 255 `;
+      }else if(sandpiles[i][j] == 2){
+        row_data += `255 0 0 `;
+      }else if(sandpiles[i][j] == 3){
+        row_data += `0 128 255 `;//"0 128 255 ";
+      }else{
+        row_data += `0 0 0 ` //"0 0 0 ";
+      }
+      array[0] += row_data;
+      if(j == kLatticeSize - 1){
+        array[0] += `\n`;
+      }
+    }
+  }
+
+  let blob = new Blob(array,{type:"text/plan"});
+  let link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'ASM.ppm';
+  link.click();
+
 }
 
 
@@ -220,7 +251,7 @@ class Simulation {
           this.currentStackToBeAdded = 0;
 
           let currentpile = this.sandpiles;
-          
+
           while(true){
             for (let x = 0; x < this.gridWidth; x++) {
               for (let y = 0; y < this.gridHeight; y++) {
@@ -590,7 +621,19 @@ const mySimulation = new Simulation();
 
 
 //最終的配置の比較
-let simu10,hayk10;
+let hayk = MoveStandard_1Step(100,2,11,5);
+mySimulation.reset_grid(11,11);
+//
+mySimulation.sandpiles[5][5] += 100;
+for(let i = 0;i<100;i++){
+  mySimulation.topple();
+}
+let naoki = mySimulation.sandpiles;
+
+console.log(`hayk:%o,naoki:%o`,hayk,naoki);
+
+
+/*
 for(let n = 10;n>=0;n--){
   mySimulation.reset_grid(10,10);
   //
@@ -599,9 +642,9 @@ for(let n = 10;n>=0;n--){
     mySimulation.topple();
   }
   simu10 = mySimulation.sandpiles;
-  
+
   hayk10 = MoveStandard_1Step(n,2,10,5);
-  
+
   console.log(`for n = %i`,n);
   const map = new Map();
   for(let i = 0;i<10;i++){
@@ -613,13 +656,6 @@ for(let n = 10;n>=0;n--){
     }
   }
   console.log(map);
-  
+
 }
-
-
-
-
-
-
-
-
+*/
