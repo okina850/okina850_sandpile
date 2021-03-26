@@ -299,7 +299,7 @@ class Simulation {
 
       for(let j=1;j<=5;j++){
           this.currentStackToBeAdded = j * 100000;
-          this.sandpiles[Math.floor(this.gridWidth / 2) + 1][Math.floor(this.gridHeight / 2) + 1] += this.currentStackToBeAdded;
+          this.sandpiles[Math.floor(this.gridWidth / 2)][Math.floor(this.gridHeight / 2)] += this.currentStackToBeAdded;
           this.wholeAddedGrains += this.currentStackToBeAdded;
           this.currentStackToBeAdded = 0;
 
@@ -533,7 +533,7 @@ class Simulation {
     hayk.innerText = "MoveStandard_1Step";
     hayk.addEventListener("click", () => {
       this.wholeAddedGrains += this.currentStackToBeAdded;
-      this.Add_MoveStandard_1Step(this.sandpiles,this.currentStackToBeAdded,this.initHeight,this.gridWidth,Math.floor(this.gridWidth/2)+1);
+      this.Add_MoveStandard_1Step(this.sandpiles,this.currentStackToBeAdded,this.initHeight,this.gridWidth,Math.floor(this.gridWidth/2));
       render();
     });
 
