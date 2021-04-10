@@ -29,6 +29,10 @@ function render() {
         col = mySimulation.colors[2];
       } else if (num == 3) {
         col = mySimulation.colors[3];
+      } else if (num == -1){
+        col = mySimulation.colors[4];
+      } else if (num == -2){
+        col = mySimulation.colors[5];
       }
 
       let pix = (x + y * width) * 4;
